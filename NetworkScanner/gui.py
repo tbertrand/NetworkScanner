@@ -38,7 +38,7 @@ class GUI(QMainWindow):
 
         #report label
         reportLabel = QLabel('Scan Report:', self)
-        reportLabel.move(15, 55)
+        reportLabel.move(15, 60)
 
         #report textarea
         report = QTextEdit(self)
