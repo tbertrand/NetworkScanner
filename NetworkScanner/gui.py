@@ -35,6 +35,44 @@ class GUI(QMainWindow):
         toolbar.addAction(saveAction)
         toolbar.addAction(scanAction)
         toolbar.addAction(cancelAction)
+        
+                #TextBoxes For IP Addresses
+        fromIPOne = QTextEdit(self)
+        fromIPOne.setGeometry(220, 60, 30, 25)
+
+        fromIPTwo = QTextEdit(self)
+        fromIPTwo.setGeometry(265, 60, 30, 25)
+
+        fromIPThree = QTextEdit(self)
+        fromIPThree.setGeometry(310, 60, 30, 25)
+
+        fromIPFour = QTextEdit(self)
+        fromIPFour.setGeometry(355, 60, 30, 25)
+
+
+        
+
+        toIPOne = QTextEdit(self)
+        toIPOne.setGeometry(450, 60, 30, 25)
+
+        toIPTwo = QTextEdit(self)
+        toIPTwo.setGeometry(495, 60, 30, 25)
+
+        toIPThree = QTextEdit(self)
+        toIPThree.setGeometry(540, 60, 30, 25)
+
+        toIPFour = QTextEdit(self)
+        toIPFour.setGeometry(585, 60, 30, 25)
+
+        #IP Address Labels
+        ipAddressLabel = QLabel('IP Range', self)
+        ipAddressLabel.move(120, 60)
+
+        FromLabel = QLabel('From: ', self)
+        FromLabel.move(180, 60)
+
+        toLabel = QLabel('To: ', self)
+        toLabel.move(430, 60)
 
         #report label
         reportLabel = QLabel('Scan Report:', self)
