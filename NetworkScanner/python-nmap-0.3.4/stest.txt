@@ -1,0 +1,1 @@
+# Nmap 6.47 scan initiated Sun Mar 29 16:15:55 2015 as: nmap -sC -sS --exclude 192.168.0.13 -oN stest.txt 192.168.0.2-100

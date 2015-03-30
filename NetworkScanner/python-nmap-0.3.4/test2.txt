@@ -1,0 +1,62 @@
+# Nmap 6.47 scan initiated Thu Mar 26 15:43:18 2015 as: nmap -sC --open -oN test2.txt --exclude localhost 192.168.0.2-100
+Nmap scan report for 192.168.0.10
+Host is up (0.062s latency).
+Not shown: 996 closed ports
+PORT     STATE SERVICE
+21/tcp   open  ftp
+| ftp-anon: Anonymous FTP login allowed (FTP code 230)
+|_Can't get directory listing: TIMEOUT
+80/tcp   open  http
+|_http-methods: No Allow or Public header in OPTIONS response (status code 501)
+|_http-title: Site doesn't have a title (text/html).
+445/tcp  open  microsoft-ds
+8200/tcp open  trivnet1
+MAC Address: 00:18:4D:FF:FF:07 (Netgear)
+
+Host script results:
+|_nbstat: NetBIOS name: READYSHARE, NetBIOS user: <unknown>, NetBIOS MAC: <unknown> (unknown)
+| smb-os-discovery: 
+|   OS: Unix (Samba 3.0.37)
+|   NetBIOS computer name: 
+|   Workgroup: WORKGROUP
+|_  System time: 1970-01-09T09:40:13+00:00
+| smb-security-mode: 
+|   Account that was used for smb scripts: guest
+|   User-level authentication
+|   SMB Security: Challenge/response passwords supported
+|_  Message signing disabled (dangerous, but default)
+|_smbv2-enabled: Server doesn't support SMBv2 protocol
+
+Nmap scan report for 192.168.0.16
+Host is up (0.0080s latency).
+Not shown: 991 filtered ports
+PORT      STATE SERVICE
+80/tcp    open  http
+|_http-title: Site doesn't have a title.
+135/tcp   open  msrpc
+139/tcp   open  netbios-ssn
+443/tcp   open  https
+|_http-title: Site doesn't have a title.
+445/tcp   open  microsoft-ds
+554/tcp   open  rtsp
+2869/tcp  open  icslap
+5357/tcp  open  wsdapi
+10243/tcp open  unknown
+MAC Address: E4:F4:C6:48:AE:97 (Netgear)
+
+Host script results:
+|_nbstat: NetBIOS name: KYLER-PC, NetBIOS user: <unknown>, NetBIOS MAC: e4:f4:c6:48:ae:97 (Netgear)
+| smb-os-discovery: 
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   NetBIOS computer name: KYLER-PC
+|   Workgroup: WORKGROUP
+|_  System time: 2015-03-26T15:44:00-05:00
+| smb-security-mode: 
+|   Account that was used for smb scripts: <blank>
+|   User-level authentication
+|   SMB Security: Challenge/response passwords supported
+|_  Message signing disabled (dangerous, but default)
+|_smbv2-enabled: Server supports SMBv2 protocol
+
+# Nmap done at Thu Mar 26 15:44:39 2015 -- 99 IP addresses (5 hosts up) scanned in 82.21 seconds
