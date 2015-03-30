@@ -1,7 +1,11 @@
 import sys
+import os
 import nmap
+#import sipconfig
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+
 
 class GUI(QMainWindow):
     def __init__(self):
@@ -11,13 +15,14 @@ class GUI(QMainWindow):
     def initUI(self):
 
         #menu actions
-        exitAction = QAction(QIcon('icons/exit.png'), 'Exit', self)
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.triggered.connect(qApp.exit)
+        clearAction = QAction(QIcon('icons/clear.png'), 'Clear', self)
+        clearAction.setShortcut('Ctrl+E')
+        clearAction.triggered.connect(self.clearText)
 
         #toolbar actions
-        cancelAction = QAction(QIcon('icons/cancel.png'), 'Cancel Scan', self)
-        #scanAction.triggered.connect()
+        clearAction = QAction(QIcon('icons/clear.png'), 'Clear', self)
+        clearAction.setShortcut('Ctrl+E')
+        clearAction.triggered.connect(self.clearText)
 
         scanAction = QAction(QIcon('icons/scan.png'), 'Scan Network', self)
         scanAction.setShortcut('Ctrl+D')
@@ -25,18 +30,20 @@ class GUI(QMainWindow):
 
         saveAction = QAction(QIcon('icons/save.png'), 'Save Report', self)
         saveAction.setShortcut('Ctrl+S')
-        #saveAction.triggered.connect()
+        saveAction.triggered.connect(self.saveResults)
 
         #menu
         menubar = self.menuBar()
-        fileMenu = menubar.addMenu('&File')
-        fileMenu.addAction(exitAction)
+        fileMenu = menubar.addMenu('&Menu')
+        fileMenu.addAction(saveAction)
+        fileMenu.addAction(scanAction)
+        fileMenu.addAction(clearAction)
 
         #toolbar
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(saveAction)
         toolbar.addAction(scanAction)
-        toolbar.addAction(cancelAction)
+        toolbar.addAction(clearAction)
         
         #flag checkboxes
         self.CBsn = QCheckBox('Find Hosts', self)
@@ -48,13 +55,10 @@ class GUI(QMainWindow):
         self.CBv = QCheckBox('Verbosity', self)
         self.CBv.move(335, 35)
         
-        self.CBout = QCheckBox('Save to File', self)
-        self.CBout.move(420, 35)
         self.outFileName = QLineEdit(self)
-        self.outFileName.setGeometry(520, 35, 105, 25)
-        self.outFileName.setPlaceholderText("File name...")
-        #outFileName.move(520, 35)
-        
+        self.outFileName.setGeometry(520, 35, 150, 25)
+        self.outFileName.setPlaceholderText("Save file name...")
+        self.outFileName.move(475, 35)
         
         #TextBoxes For IP Addresses
         self.fromIPText = QLineEdit(self)
@@ -68,12 +72,6 @@ class GUI(QMainWindow):
         #IP Address Labels
         ipAddressLabel = QLabel('IP Range:', self)
         ipAddressLabel.move(100, 70)
-
-        #FromLabel = QLabel('-', self)
-        #FromLabel.move(380, 70)
-
-        #toLabel = QLabel('To: ', self)
-        #toLabel.move(380, 70)
         
         hostnameLabel = QLabel('OR, Hostname:', self)
         hostnameLabel.move(70, 100)  
@@ -82,14 +80,11 @@ class GUI(QMainWindow):
         self.hostnameText.setGeometry(220, 100, 150, 25)    
         self.hostnameText.setPlaceholderText("Hostname...")
 
-        #report label
-        #reportLabel = QLabel('Scan Report:', self)
-        #reportLabel.move(15, 70)
-
         #report textarea
         self.report = QTextEdit(self)
         self.report.setGeometry(15, 130, 610, 300)
         self.report.setReadOnly(True)
+        self.report.setPlaceholderText("If using a single IP instead of an IP range, put the single IP in the \"From IP Address...\" box.\n\nIP addresses and a hostname cannot be entered at the same time.\n\nIP addresses must be in a correct format.\n\nThe OS Detection flag supercedes the Find Hosts flag, therefore selecting both will result in only the OS Detection flag being used.\n\nEnter a file name in the \"Save file name...\" box before saving. Your log file will be located in the \'logs\' directory.")
 
         #application window
         self.setGeometry(300, 300, 640, 445)
@@ -104,6 +99,25 @@ class GUI(QMainWindow):
             event.accept()
         else:
             event.ignore()
+    
+    def saveResults(self, event):
+        saveName = self.outFileName.text()
+        saveName = saveName.replace('.txt','')
+        saveName = saveName.replace('.','')
+        saveName += '.txt'
+        fileName = 'logs/' + saveName
+        
+        if not os.path.exists('logs'):
+            os.makedirs('logs')
+        
+        file = open(fileName, 'a')
+        file.write(self.report.toPlainText())
+        file.close()
+        
+        self.report.setText("File saved to logs directory under file name \'" + saveName + "\'.")
+    
+    def clearText(self):
+        self.report.clear()
             
     def validateIP(self, IP):
         array = IP.split('.')
@@ -121,29 +135,32 @@ class GUI(QMainWindow):
         hostname = self.hostnameText.text().replace(' ', '')
         argIP = ''
         
+        
         if not fromIP and not hostname:
-            #no ip or host entered
-            print("cancel 0")
+            self.setWindowTitle('Network Scanning Utility')
+            self.report.setText("IP or Hostname must be entered.")
             return False
             
         elif (fromIP or toIP) and hostname:
-            #both entered
-            print('cancel 1')
+            self.setWindowTitle('Network Scanning Utility')
+            self.report.setText("You cannot enter both an IP address and a hostname.")
             return False
             
         elif fromIP and not self.validateIP(fromIP):
-            print('cancel 2')
+            self.setWindowTitle('Network Scanning Utility')
+            self.report.setText("Entered IP address is not a valid IP address.")
             return False
         
         elif toIP and not self.validateIP(toIP):
-            print('cancel 3')
+            self.setWindowTitle('Network Scanning Utility')
+            self.report.setText("Entered IP address is not a valid IP address.")
             return False
         
         elif fromIP and toIP and not hostname:
             #ip ranges
             fromIP = fromIP.split('.')
             toIP = toIP.split('.')
-            
+                        
             for i in range(0, 4):
                 if fromIP[i] == toIP[i]:
                     argIP += fromIP[i]
@@ -154,19 +171,17 @@ class GUI(QMainWindow):
                         argIP += toIP[i] + '-' + fromIP[i]
                 if i != 3:
                     argIP += '.'
-            print(argIP)        
+                   
             return argIP
         
         elif fromIP and not toIP and not hostname:
-            print(fromIP)
             return fromIP
         
         elif hostname:
-            print(hostname)
             return hostname
         
         
-    def createArguments(self):
+    def getArguments(self):
         #create arguments string
         args = ""
         
@@ -176,24 +191,42 @@ class GUI(QMainWindow):
         #sC and sn flag check
         if self.CBos.isChecked(): args += '-sC '
         elif self.CBsn.isChecked(): args += '-sn '        
-
-        #out flag check
-        if self.CBout.isChecked():
-            filename = self.outFileName.text()
-            filename = filename.replace('.txt','')
-            filename = filename.replace('.','')
-            filename += '.txt'
-            outfile = '-oN ' + filename
-            args += outfile
         
         return args
 
     def scan(self):
+        self.report.clear()
+        self.setWindowTitle('Network Scanning Utility (Scanning...)')
+        hostlist = self.getHosts()
+        arglist = self.getArguments()
         nm = nmap.PortScanner()
-        targets = self.getHosts()
-        args = self.createArguments()
-        nm.scan(hosts = targets, arguments = args)
-        self.report.setText(str(nm.scan_result()))
+        nm.scan(hosts = hostlist, arguments = arglist)
+
+    
+        scanString = "Scan on:  " + nm.scanstats()['timestr'] + "\n  Time Elapsed:  " + nm.scanstats()['elapsed']
+        scanString += "\n  Total Hosts:  " + nm.scanstats()['totalhosts'] + " -- " + nm.scanstats()['uphosts'] + " hosts up, " + nm.scanstats()['downhosts'] + " hosts down\n\n"
+    
+        for host in nm.all_hosts():
+            hostString = ""
+            hostString += "Host:  " + host + "\n"
+    
+            if('hostscript' in nm[host]):
+                hostString += "Script Results:\n"
+                for script in nm[host]['hostscript']:
+                    scriptText = script['output'].strip()
+                    if(scriptText[0] == "N"): scriptArray = scriptText.split(", ")
+                    else: scriptArray = scriptText.split("\n")
+    
+                    for item in scriptArray:
+                        hostString += "    " + item + "\n"
+                    hostString += "\n"
+            hostString += "---------------\n\n"
+    
+            scanString += hostString
+        
+        self.report.setText(scanString)
+        self.setWindowTitle('Network Scanning Utility')
+        return scanString
     
         
 if __name__ == '__main__':
