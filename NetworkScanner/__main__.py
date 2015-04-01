@@ -47,18 +47,18 @@ class GUI(QMainWindow):
         
         #flag checkboxes
         self.CBsn = QCheckBox('Find Hosts', self)
-        self.CBsn.move(130,35)
+        self.CBsn.move(130,25)
         
         self.CBos = QCheckBox('OS Detection', self)
-        self.CBos.move(225, 35)
+        self.CBos.move(225, 25)
         
         self.CBv = QCheckBox('Verbosity', self)
-        self.CBv.move(335, 35)
+        self.CBv.move(335, 25)
         
         self.outFileName = QLineEdit(self)
-        self.outFileName.setGeometry(520, 35, 150, 25)
+        self.outFileName.setGeometry(520, 25, 150, 25)
         self.outFileName.setPlaceholderText("Save file name...")
-        self.outFileName.move(475, 35)
+        self.outFileName.move(475, 25)
         
         #TextBoxes For IP Addresses
         self.fromIPText = QLineEdit(self)
